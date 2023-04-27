@@ -4,6 +4,7 @@ import NavigationBar from './NavigationBar'
 import AllCurrencies from "./AllCurrencies";
 import SingleCurrency from "./SingleCurrency";
 
+
 class CurrencyConverter extends React.Component {
   constructor(props) {
     super(props);
@@ -73,7 +74,6 @@ class CurrencyConverter extends React.Component {
     return (
       <Router>
         <div>
-          <h1>Currency Converter</h1>
           <NavigationBar />
           <Switch>
             <Route exact path="/">
@@ -102,6 +102,12 @@ class CurrencyConverter extends React.Component {
             </Route>
           </Switch>
         </div>
+        <footer>
+          <p>Created by Ian Key - Altcademy Student</p>
+          <a href="https://github.com/ian-key">
+            <img src="https://github.com/favicon.ico" alt="GitHub logo" />
+          </a>
+        </footer>
       </Router>
     );
   }
