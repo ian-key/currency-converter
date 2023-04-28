@@ -1,4 +1,7 @@
 import React from "react";
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 class SingleCurrency extends React.Component {
   render() {
@@ -12,7 +15,12 @@ class SingleCurrency extends React.Component {
     return (
       <div>
         <h2>Single Currency Conversion</h2>
+        <p>Enter an amount and pick a starting and target currency. Click 'Convert' to see the latest conversion amount.</p>
         <form onSubmit={this.props.handleSubmitSingle}>
+        <Container>
+          <Row className="align-content-center">
+            <Col>
+
           <label>
             Amount:
             <input
@@ -21,6 +29,8 @@ class SingleCurrency extends React.Component {
               onChange={this.props.handleChange}
             />
           </label>
+          </Col>
+          <Col>
           <label>
             From:
             <select
@@ -31,6 +41,8 @@ class SingleCurrency extends React.Component {
               {currencyOptions}
             </select>
           </label>
+          </Col>
+          <Col>
           <label>
             To:
             <select
@@ -41,9 +53,21 @@ class SingleCurrency extends React.Component {
               {currencyOptions}
             </select>
           </label>
-          <input type="submit" value="Convert" />
+          </Col>
+          </Row>
+          <Row className="align-items-center">
+            <Col>
+            <input type="submit" value="Convert" />
+            </Col>
+            <Col>
+            <p>Conversion: {this.props.result}</p>
+            </Col>
+          </Row>
+          </Container>
         </form>
-        <p>{this.props.result}</p>
+        <div>
+          <p></p>
+        </div>
       </div>
     );
   }

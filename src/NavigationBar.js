@@ -1,21 +1,19 @@
 import React from "react";
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Nav, Navbar } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 function NavigationBar() {
     return (
-      <Navbar bg="light" expand="lg">
-        <Container>
-          <Navbar.Brand>React Currency Converter</Navbar.Brand>
+      <Navbar bg="light" >
+          <Navbar.Brand>React Currency Converter - Portfolio Project</Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/">
-              All Currencies
+              Currency Table
             </Nav.Link>
             <Nav.Link as={Link} to="/single-currency">
-              Single Currency
+              Single Conversion
             </Nav.Link>
           </Nav>
-          </Container>
       </Navbar>
     );
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import Table from 'react-bootstrap/Table';
 class AllCurrencies extends React.Component {
   render() {
     const allRates = this.props.allRates;
@@ -12,7 +13,8 @@ class AllCurrencies extends React.Component {
 
     return (
       <div>
-        <h2>All Currencies</h2>
+        <h2>Currency Table</h2>
+        <p>Enter an amount using the box below to see the equivalent values of all other currencies.</p>
         <form onSubmit={this.props.handleSubmitAll}>
           <label>
             Amount:
@@ -22,9 +24,9 @@ class AllCurrencies extends React.Component {
               onChange={this.props.handleChange}
             />
           </label>
-          <input type="submit" value="Convert" />
+          {/*<input type="submit" value="Convert" />*/}
         </form>
-        <table>
+        <Table responsive>
           <thead>
             <tr>
               <th>Currency</th>
@@ -33,8 +35,8 @@ class AllCurrencies extends React.Component {
             </tr>
           </thead>
           <tbody>{tableRows}</tbody>
-        </table>
-        <p>{this.props.result}</p>
+        </Table>
+        {/*<p>{this.props.result}</p>*/}
       </div>
     );
   }
