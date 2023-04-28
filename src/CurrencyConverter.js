@@ -1,8 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import NavigationBar from './NavigationBar'
+import NavigationBar from './NavigationBar';
 import AllCurrencies from "./AllCurrencies";
 import SingleCurrency from "./SingleCurrency";
+import Chart from 'chart.js';
 
 
 class CurrencyConverter extends React.Component {
@@ -10,8 +11,8 @@ class CurrencyConverter extends React.Component {
     super(props);
     this.state = {
       allRates: {},
-      initialCurrency: "",
-      targetCurrency: "",
+      initialCurrency: '',
+      targetCurrency: '',
       amount: 0,
       result: "",
     };
@@ -25,12 +26,14 @@ class CurrencyConverter extends React.Component {
       this
     );
     this.handleSubmitSingle = this.handleSubmitSingle.bind(this);
+    this.chartRef = React.createRef();
   }
 
   componentDidMount() {
     fetch("https://api.frankfurter.app/latest")
       .then((response) => response.json())
       .then((data) => this.setState({ allRates: data.rates }));
+      this.getHistoricalRates(this.state.initialCurrency, this.state.targetCurrency);
   }
 
   handleChange(event) {
@@ -48,11 +51,15 @@ class CurrencyConverter extends React.Component {
   }
 
   handleInitialCurrencyChange(event) {
-    this.setState({ initialCurrency: event.target.value });
+    const initialCurrency = event.target.value
+    this.setState({ initialCurrency });
+    this.getHistoricalRates(initialCurrency, this.state.targetCurrency);
   }
 
   handleTargetCurrencyChange(event) {
-    this.setState({ targetCurrency: event.target.value });
+    const targetCurrency = event.target.value
+    this.setState({ targetCurrency });
+    this.getHistoricalRates(this.state.initialCurrency, targetCurrency);
   }
 
   handleSubmitSingle(event) {
@@ -68,6 +75,47 @@ class CurrencyConverter extends React.Component {
     const result = ((amount / initialRate) * targetRate).toFixed(2);
 
     this.setState({ result: result });
+    this.getHistoricalRates(this.state.initialCurrency, this.state.targetCurrency);
+  }
+
+  getHistoricalRates = (base, quote) => {
+    const endDate = new Date().toISOString().split('T')[0];
+    const startDate = new Date((new Date).getTime() - (30 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
+    fetch(`https://api.frankfurter.app/${startDate}..${endDate}?from=${base}&to=${quote}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        const chartLabels = Object.keys(data.rates);
+        const chartData = Object.values(data.rates).map(rate => rate[quote]);
+        const chartLabel = `${base}/${quote}`;
+        this.buildChart(chartLabels, chartData, chartLabel);
+      })
+      .catch(error => console.error(error.message));
+  }
+  buildChart = (labels, data, label) => {
+    const chartRef = this.chartRef.current.getContext("2d");
+    if (typeof this.chart !== "undefined") {
+      this.chart.destroy();
+    }
+    this.chart = new Chart(this.chartRef.current.getContext("2d"), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: label,
+            data,
+            fill: false,
+            tension: 0,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+      }
+    })
   }
 
   render() {
@@ -98,10 +146,12 @@ class CurrencyConverter extends React.Component {
                 handleSubmitSingle={this.handleSubmitSingle}
                 onInitialCurrencyChange={this.handleInitialCurrencyChange}
                 onTargetCurrencyChange={this.handleTargetCurrencyChange}
+                chartRef={this.chartRef}
               />
             </Route>
           </Switch>
         </div>
+
         <footer>
           <p>Created by Ian Key - Altcademy Student</p>
           <a href="https://github.com/ian-key">

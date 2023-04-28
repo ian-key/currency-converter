@@ -67,6 +67,9 @@ class SingleCurrency extends React.Component {
         </form>
         <div>
           <p></p>
+          <h4>Historical Conversion Rate</h4>
+          <p>Select two currencies above to load the chart.</p>
+          <canvas ref={this.props.chartRef} />
         </div>
       </div>
     );
