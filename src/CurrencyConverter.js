@@ -11,8 +11,9 @@ class CurrencyConverter extends React.Component {
     super(props);
     this.state = {
       allRates: {},
-      initialCurrency: '',
-      targetCurrency: '',
+      currencyList: {},
+      initialCurrency: 'GBP',
+      targetCurrency: 'USD',
       amount: 0,
       result: "",
     };
@@ -30,14 +31,27 @@ class CurrencyConverter extends React.Component {
   }
 
   componentDidMount() {
-    fetch("https://api.frankfurter.app/latest")
+    fetch("https://api.frankfurter.app/latest?from=" + this.state.initialCurrency)
       .then((response) => response.json())
       .then((data) => this.setState({ allRates: data.rates }));
+      this.getCurrencyList();
       this.getHistoricalRates(this.state.initialCurrency, this.state.targetCurrency);
   }
 
   handleChange(event) {
     this.setState({ amount: event.target.value });
+  }
+
+  getCurrencyList() {
+    fetch("https://api.frankfurter.app/currencies")
+    .then((response) => response.json())
+    .then((data) => this.setState({ currencyList: data }));
+  }
+
+  handleAdditionalFetch = (base) => {
+    fetch(`https://api.frankfurter.app/latest?from=${base}`)
+      .then((response) => response.json())
+      .then((data) => this.setState({ allRates: data.rates }));
   }
 
   handleSubmitAll(event) {
@@ -53,6 +67,7 @@ class CurrencyConverter extends React.Component {
   handleInitialCurrencyChange(event) {
     const initialCurrency = event.target.value
     this.setState({ initialCurrency });
+    this.handleAdditionalFetch(initialCurrency);
     this.getHistoricalRates(initialCurrency, this.state.targetCurrency);
   }
 
@@ -127,12 +142,14 @@ class CurrencyConverter extends React.Component {
             <Route exact path="/">
               <AllCurrencies
                 allRates={this.state.allRates}
+                currencyList={this.state.currencyList}
                 initialCurrency={this.state.initialCurrency}
                 amount={this.state.amount}
                 result={this.state.result}
                 handleChange={this.handleChange}
                 handleSubmitAll={this.handleSubmitAll}
                 handleInitialCurrencyChange={this.handleInitialCurrencyChange}
+                onInitialCurrencyChange={this.handleInitialCurrencyChange}
               />
             </Route>
             <Route path="/single-currency">
